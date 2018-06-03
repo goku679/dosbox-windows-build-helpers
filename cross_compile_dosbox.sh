@@ -565,6 +565,11 @@ build_dependencies() {
   build_freetype
   build_imlib2
   build_pixman
+  build_iconv
+  build_libxml2
+  build_fontconfig
+  build_glib120
+  #build_cairo
   #build_directfb
   #build_sdl
 }
@@ -824,6 +829,59 @@ build_pixman() {
       do_make_and_make_install
     cd ..
     touch pixman
+  fi
+}
+
+build_iconv() {
+  download_and_unpack_file https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.15.tar.gz
+  cd libiconv-1.15
+    generic_configure "--disable-nls"
+    do_make "install-lib" # No need for 'do_make_install', because 'install-lib' already has install-instructions.
+  cd ..
+}
+
+build_libxml2() {
+  download_and_unpack_file http://xmlsoft.org/sources/libxml2-2.9.4.tar.gz libxml2-2.9.4
+  cd libxml2-2.9.4
+    if [[ ! -f libxml.h.bak ]]; then # Otherwise you'll get "libxml.h:...: warning: "LIBXML_STATIC" redefined". Not an error, but still.
+      sed -i.bak "/NOLIBTOOL/s/.*/& \&\& !defined(LIBXML_STATIC)/" libxml.h
+    fi
+    generic_configure "--with-ftp=no --with-http=no --with-python=no"
+    do_make_and_make_install
+  cd ..
+}
+
+build_fontconfig() {
+  download_and_unpack_file https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.12.4.tar.gz
+  cd fontconfig-2.12.4
+    #export CFLAGS= # compile fails with -march=sandybridge ... with mingw 4.0.6 at least ...
+    generic_configure "--enable-iconv --enable-libxml2 --disable-docs --with-libiconv" # Use Libxml2 instead of Expat.
+    do_make_and_make_install
+    #reset_cflags
+  cd ..
+}
+
+build_glib120() {
+  if [ ! -e glib120 ]; then
+    download_and_unpack_file https://download.gnome.org/sources/glib/1.2/glib-1.2.10.tar.gz
+    apply_patch file://$patch_dir/glib-1.2.10.diff
+    cd glib-1.2.10
+      generic_configure
+      do_make_and_make_install
+    cd ..
+    touch glib120 
+  fi
+}
+
+build_cairo() {
+  if [ ! -e cairo ]; then
+    download_and_unpack_file https://www.cairographics.org/releases/cairo-1.14.12.tar.xz
+    cd cairo-1.14.12
+      generic_configure "--enable-tee=yes --enable-xml=yes --enable-gobject=yes --enable-svg=yes --enable-pdf=yes --enable-ps=yes --enable-fc=yes --enable-ft=yes --enable-script=yes --enable-png=yes"
+      do_make_and_make_install
+    cd ..
+    exit 1
+    touch cairo 
   fi
 }
 

@@ -1,0 +1,206 @@
+diff -Naur glib-1.2.10.old/config.sub glib-1.2.10/config.sub
+--- glib-1.2.10.old/config.sub	2018-06-03 15:00:44.014119948 -0700
++++ glib-1.2.10/config.sub	2018-06-03 15:39:46.564195748 -0700
+@@ -189,6 +189,9 @@
+ 	i[34567]86)
+ 	  basic_machine=$basic_machine-pc
+ 	  ;;
++	x86_64)
++	  basic_machine=$basic_machine-pc
++	  ;;
+ 	# Object if more than one company name word.
+ 	*-*-*)
+ 		echo Invalid configuration \`$1\': machine \`$basic_machine\' not recognized 1>&2
+@@ -196,7 +199,7 @@
+ 		;;
+ 	# Recognize the basic CPU types with company name.
+ 	# FIXME: clean up the formatting here.
+-	vax-* | tahoe-* | i[34567]86-* | i860-* | ia64-* | m32r-* | m68k-* | m68000-* \
++	vax-* | tahoe-* | i[34567]86-* | x86_64-* | i860-* | ia64-* | m32r-* | m68k-* | m68000-* \
+ 	      | m88k-* | sparc-* | ns32k-* | fx80-* | arc-* | arm-* | c[123]* \
+ 	      | mips-* | pyramid-* | tron-* | a29k-* | romp-* | rs6000-* \
+ 	      | power-* | none-* | 580-* | cray2-* | h8300-* | h8500-* | i960-* \
+diff -Naur glib-1.2.10.old/glib.h glib-1.2.10/glib.h
+--- glib-1.2.10.old/glib.h	2018-06-03 15:00:44.018126167 -0700
++++ glib-1.2.10/glib.h	2018-06-03 15:56:22.238841493 -0700
+@@ -202,20 +202,20 @@
+ #  endif
+ #endif
+ #ifndef G_INLINE_FUNC
+-#  ifdef __GNUC__
+-#    ifdef __OPTIMIZE__
+-#      define G_INLINE_FUNC extern inline
+-#    else
+-#      undef G_CAN_INLINE
+-#      define G_INLINE_FUNC extern
+-#    endif
+-#  else /* !__GNUC__ */
++//#  ifdef __GNUC__
++//#    ifdef __OPTIMIZE__
++//#      define G_INLINE_FUNC extern inline
++//#    else
++//#      undef G_CAN_INLINE
++//#      define G_INLINE_FUNC extern
++//#    endif
++//#  else /* !__GNUC__ */
+ #    ifdef G_CAN_INLINE
+ #      define G_INLINE_FUNC static inline
+ #    else
+ #      define G_INLINE_FUNC extern
+ #    endif
+-#  endif /* !__GNUC__ */
++//#  endif /* !__GNUC__ */
+ #endif /* !G_INLINE_FUNC */
+ 
+ 
+@@ -272,13 +272,13 @@
+ /* Wrap the gcc __PRETTY_FUNCTION__ and __FUNCTION__ variables with
+  * macros, so we can refer to them as strings unconditionally.
+  */
+-#ifdef	__GNUC__
+-#define	G_GNUC_FUNCTION		__FUNCTION__
+-#define	G_GNUC_PRETTY_FUNCTION	__PRETTY_FUNCTION__
+-#else	/* !__GNUC__ */
++//#if defined(__GNUC__)
++//#define	G_GNUC_FUNCTION		__FUNCTION__
++//#define	G_GNUC_PRETTY_FUNCTION	__PRETTY_FUNCTION__
++//#else	/* !__GNUC__ */
+ #define	G_GNUC_FUNCTION		""
+ #define	G_GNUC_PRETTY_FUNCTION	""
+-#endif	/* !__GNUC__ */
++//#endif	/* !__GNUC__ */
+ 
+ /* we try to provide a usefull equivalent for ATEXIT if it is
+  * not defined, but use is actually abandoned. people should
+@@ -354,27 +354,27 @@
+ 
+ #else /* !G_DISABLE_ASSERT */
+ 
+-#ifdef __GNUC__
+-
+-#define g_assert(expr)			G_STMT_START{		\
+-     if (!(expr))						\
+-       g_log (G_LOG_DOMAIN,					\
+-	      G_LOG_LEVEL_ERROR,				\
+-	      "file %s: line %d (%s): assertion failed: (%s)",	\
+-	      __FILE__,						\
+-	      __LINE__,						\
+-	      __PRETTY_FUNCTION__,				\
+-	      #expr);			}G_STMT_END
+-
+-#define g_assert_not_reached()		G_STMT_START{		\
+-     g_log (G_LOG_DOMAIN,					\
+-	    G_LOG_LEVEL_ERROR,					\
+-	    "file %s: line %d (%s): should not be reached",	\
+-	    __FILE__,						\
+-	    __LINE__,						\
+-	    __PRETTY_FUNCTION__);	}G_STMT_END
+-
+-#else /* !__GNUC__ */
++//#ifdef __GNUC__
++//
++//#define g_assert(expr)			G_STMT_START{		\
++//     if (!(expr))						\
++//       g_log (G_LOG_DOMAIN,					\
++//	      G_LOG_LEVEL_ERROR,				\
++//	      "file %s: line %d (%s): assertion failed: (%s)",	\
++//	      __FILE__,						\
++//	      __LINE__,						\
++//	      __PRETTY_FUNCTION__,				\
++//	      #expr);			}G_STMT_END
++//
++//#define g_assert_not_reached()		G_STMT_START{		\
++//     g_log (G_LOG_DOMAIN,					\
++//	    G_LOG_LEVEL_ERROR,					\
++//	    "file %s: line %d (%s): should not be reached",	\
++//	    __FILE__,						\
++//	    __LINE__,						\
++//	    __PRETTY_FUNCTION__);	}G_STMT_END
++//
++//#else /* !__GNUC__ */
+ 
+ #define g_assert(expr)			G_STMT_START{		\
+      if (!(expr))						\
+@@ -392,7 +392,7 @@
+ 	    __FILE__,					\
+ 	    __LINE__);		}G_STMT_END
+ 
+-#endif /* __GNUC__ */
++//#endif /* __GNUC__ */
+ 
+ #endif /* !G_DISABLE_ASSERT */
+ 
+@@ -404,35 +404,35 @@
+ 
+ #else /* !G_DISABLE_CHECKS */
+ 
+-#ifdef __GNUC__
+-
+-#define g_return_if_fail(expr)		G_STMT_START{			\
+-     if (!(expr))							\
+-       {								\
+-	 g_log (G_LOG_DOMAIN,						\
+-		G_LOG_LEVEL_CRITICAL,					\
+-		"file %s: line %d (%s): assertion `%s' failed.",	\
+-		__FILE__,						\
+-		__LINE__,						\
+-		__PRETTY_FUNCTION__,					\
+-		#expr);							\
+-	 return;							\
+-       };				}G_STMT_END
+-
+-#define g_return_val_if_fail(expr,val)	G_STMT_START{			\
+-     if (!(expr))							\
+-       {								\
+-	 g_log (G_LOG_DOMAIN,						\
+-		G_LOG_LEVEL_CRITICAL,					\
+-		"file %s: line %d (%s): assertion `%s' failed.",	\
+-		__FILE__,						\
+-		__LINE__,						\
+-		__PRETTY_FUNCTION__,					\
+-		#expr);							\
+-	 return val;							\
+-       };				}G_STMT_END
+-
+-#else /* !__GNUC__ */
++//#ifdef __GNUC__
++//
++//#define g_return_if_fail(expr)		G_STMT_START{			\
++//     if (!(expr))							\
++//       {								\
++//	 g_log (G_LOG_DOMAIN,						\
++//		G_LOG_LEVEL_CRITICAL,					\
++//		"file %s: line %d (%s): assertion `%s' failed.",	\
++//		__FILE__,						\
++//		__LINE__,						\
++//		__PRETTY_FUNCTION__,					\
++//		#expr);							\
++//	 return;							\
++//       };				}G_STMT_END
++//
++//#define g_return_val_if_fail(expr,val)	G_STMT_START{			\
++//     if (!(expr))							\
++//       {								\
++//	 g_log (G_LOG_DOMAIN,						\
++//		G_LOG_LEVEL_CRITICAL,					\
++//		"file %s: line %d (%s): assertion `%s' failed.",	\
++//		__FILE__,						\
++//		__LINE__,						\
++//		__PRETTY_FUNCTION__,					\
++//		#expr);							\
++//	 return val;							\
++//       };				}G_STMT_END
++//
++//#else /* !__GNUC__ */
+ 
+ #define g_return_if_fail(expr)		G_STMT_START{		\
+      if (!(expr))						\
+@@ -458,7 +458,7 @@
+ 	 return val;						\
+        };				}G_STMT_END
+ 
+-#endif /* !__GNUC__ */
++//#endif /* !__GNUC__ */
+ 
+ #endif /* !G_DISABLE_CHECKS */
+ 
