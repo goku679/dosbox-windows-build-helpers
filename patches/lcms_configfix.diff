@@ -1,0 +1,39 @@
+diff -Naur lcms-1.19.old/configure lcms-1.19/configure
+--- lcms-1.19.old/configure	2018-05-30 14:45:33.625098377 -0700
++++ lcms-1.19/configure	2018-05-30 14:46:42.150472404 -0700
+@@ -25125,7 +25125,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff  $LIBS"
++LIBS="-ltiff -llzma -ljbig  $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -25192,7 +25192,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff  $LIBS"
++LIBS="-ltiff -llzma -ljbig  $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -25259,7 +25259,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff  $LIBS"
++LIBS="-ltiff -llzma -ljbig  $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -25331,7 +25331,7 @@
+ 	have_tiff='no (failed tests)'
+     else
+ 	LIB_TIFF='-ltiff'
+-	LIBS="$LIB_TIFF $LIBS"
++	LIBS="$LIB_TIFF -llzma -ljbig $LIBS"
+ 
+ cat >>confdefs.h <<\_ACEOF
+ #define HasTIFF 1

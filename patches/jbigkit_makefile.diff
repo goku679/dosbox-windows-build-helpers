@@ -1,0 +1,101 @@
+diff -Naur jbigkit-2.1.old/libjbig/Makefile jbigkit-2.1/libjbig/Makefile
+--- jbigkit-2.1.old/libjbig/Makefile	2018-05-30 11:22:11.706076591 -0700
++++ jbigkit-2.1/libjbig/Makefile	2018-05-30 11:31:08.678418434 -0700
+@@ -1,10 +1,12 @@
+ # Unix makefile for the JBIG-KIT library
+ 
+ # Select an ANSI/ISO C compiler here, GNU gcc is recommended
+-CC = gcc
++CC ?= gcc
++AR ?= ar
++RANLIB ?= ranlib
+ 
+ # Options for the compiler: A high optimization level is suggested
+-CFLAGS = -g -O -W -Wall -ansi -pedantic # --coverage
++CFLAGS := -g -O W -Wall -ansi -pedantic $(CFLAGS) # --coverage
+ 
+ all: libjbig.a libjbig85.a tstcodec tstcodec85
+ 
+@@ -16,13 +18,13 @@
+ 
+ libjbig.a: jbig.o jbig_ar.o
+ 	rm -f libjbig.a
+-	ar rc libjbig.a jbig.o jbig_ar.o
+-	-ranlib libjbig.a
++	$(AR) rc libjbig.a jbig.o jbig_ar.o
++	-$(RANLIB) libjbig.a
+ 
+ libjbig85.a: jbig85.o jbig_ar.o
+ 	rm -f libjbig85.a
+-	ar rc libjbig85.a jbig85.o jbig_ar.o
+-	-ranlib libjbig85.a
++	$(AR) rc libjbig85.a jbig85.o jbig_ar.o
++	-$(RANLIB) libjbig85.a
+ 
+ jbig.o: jbig.c jbig.h jbig_ar.h
+ jbig85.o: jbig85.c jbig85.h jbig_ar.h
+diff -Naur jbigkit-2.1.old/Makefile jbigkit-2.1/Makefile
+--- jbigkit-2.1.old/Makefile	2018-05-30 11:22:11.706076591 -0700
++++ jbigkit-2.1/Makefile	2018-05-30 11:31:42.055097800 -0700
+@@ -1,42 +1,48 @@
+ # Unix makefile for JBIG-KIT
+ 
+ # Select an ANSI/ISO C compiler here, GNU gcc is recommended
+-CC = gcc
++CC ?= gcc
+ 
+ # Options for the compiler: A high optimization level is suggested
+-CFLAGS = -O2 -W -Wno-unused-result
+-# CFLAGS = -O -g -W -Wall -Wno-unused-result -ansi -pedantic # -DDEBUG
++CFLAGS := -O2 -W -Wno-unused-result $(CFLAGS)
++# CFLAGS = -O -g -W -Wall -Wno-unused-result -ansi -pedantic $(CFLAGS) # -DDEBUG
+ 
+-export CC CFLAGS
++export CC
+ 
+ VERSION=2.1
+ 
+ all: lib pbm
+ 	@echo "Enter 'make test' in order to start some automatic tests."
+ 
++install: all
++	mkdir -p $(PREFIX)/lib
++	cp libjbig/*.a $(PREFIX)/lib
++	mkdir -p $(PREFIX)/include
++	cp libjbig/*.h $(PREFIX)/include
++
+ lib:
+-	cd libjbig && $(MAKE) -e
++	cd libjbig && CFLAGS="$(CFLAGS)" $(MAKE) -e
+ 
+ pbm: lib
+-	cd pbmtools && $(MAKE) -e
++	cd pbmtools && CFLAGS="$(CFLAGS)" $(MAKE) -e
+ 
+ test: lib pbm
+-	cd libjbig  && $(MAKE) test
+-	cd pbmtools && $(MAKE) test
++	cd libjbig  && CFLAGS="$(CFLAGS)" $(MAKE) test
++	cd pbmtools && CFLAGS="$(CFLAGS)" $(MAKE) test
+ 
+ analyze:
+-	cd libjbig  && $(MAKE) analyze
+-	cd pbmtools && $(MAKE) analyze
++	cd libjbig  && CFLAGS="$(CFLAGS)" $(MAKE) analyze
++	cd pbmtools && CFLAGS="$(CFLAGS)" $(MAKE) analyze
+ 
+ clean:
+ 	rm -f *~ core
+-	cd libjbig  && $(MAKE) clean
+-	cd pbmtools && $(MAKE) clean
++	cd libjbig  && CFLAGS="$(CFLAGS)" $(MAKE) clean
++	cd pbmtools && CFLAGS="$(CFLAGS)" $(MAKE) clean
+ 
+ distribution:
+ 	rm -rf jbigkit-$(VERSION)
+ 	git archive v$(VERSION) --prefix jbigkit-$(VERSION)/ | tar xvf -
+-	make -C jbigkit-$(VERSION)/pbmtools txt
++	CFLAGS="$(CFLAGS)" $(MAKE) -C jbigkit-$(VERSION)/pbmtools txt
+ 	tar cvaf jbigkit-$(VERSION).tar.gz jbigkit-$(VERSION)
+ 
+ release:
