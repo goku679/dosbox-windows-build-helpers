@@ -564,6 +564,7 @@ build_dependencies() {
   build_harfbuzz
   build_freetype
   build_imlib2
+  build_pixman
   #build_directfb
   #build_sdl
 }
@@ -812,6 +813,17 @@ build_imlib2() {
       do_make_and_make_install
     cd ..
     touch imlib2
+  fi
+}
+
+build_pixman() {
+  if [ ! -e pixman ]; then
+    download_and_unpack_file https://www.cairographics.org/releases/pixman-0.34.0.tar.gz
+    cd pixman-0.34.0
+      generic_configure
+      do_make_and_make_install
+    cd ..
+    touch pixman
   fi
 }
 
