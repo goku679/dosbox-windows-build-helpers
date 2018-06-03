@@ -1,0 +1,291 @@
+diff -Naur imlib2-1.5.1.old/configure imlib2-1.5.1/configure
+--- imlib2-1.5.1.old/configure	2018-05-30 16:24:37.275818586 -0700
++++ imlib2-1.5.1/configure	2018-06-02 17:16:45.865653296 -0700
+@@ -12752,7 +12752,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ldl  $LIBS"
++LIBS="-ldl -lpsapi  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -12783,7 +12783,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+ $as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+ if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+-  lt_cv_dlopen=dlopen lt_cv_dlopen_libs=-ldl
++  lt_cv_dlopen=dlopen lt_cv_dlopen_libs="-ldl -lpsapi"
+ else
+ 
+     lt_cv_dlopen=dyld
+@@ -12813,7 +12813,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ldld  $LIBS"
++LIBS="-ldld -lpsapi $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -12844,7 +12844,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dld_shl_load" >&5
+ $as_echo "$ac_cv_lib_dld_shl_load" >&6; }
+ if test "x$ac_cv_lib_dld_shl_load" = xyes; then :
+-  lt_cv_dlopen=shl_load lt_cv_dlopen_libs=-ldld
++  lt_cv_dlopen=shl_load lt_cv_dlopen_libs="-ldld -lpsapi"
+ else
+   ac_fn_c_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
+ if test "x$ac_cv_func_dlopen" = xyes; then :
+@@ -12856,7 +12856,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ldl  $LIBS"
++LIBS="-ldl -lpsapi $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -12887,7 +12887,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+ $as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+ if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+-  lt_cv_dlopen=dlopen lt_cv_dlopen_libs=-ldl
++  lt_cv_dlopen=dlopen lt_cv_dlopen_libs="-ldl -lpsapi"
+ else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -lsvld" >&5
+ $as_echo_n "checking for dlopen in -lsvld... " >&6; }
+@@ -12926,7 +12926,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_svld_dlopen" >&5
+ $as_echo "$ac_cv_lib_svld_dlopen" >&6; }
+ if test "x$ac_cv_lib_svld_dlopen" = xyes; then :
+-  lt_cv_dlopen=dlopen lt_cv_dlopen_libs=-lsvld
++  lt_cv_dlopen=dlopen lt_cv_dlopen_libs="-lsvld -lpsapi"
+ else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for dld_link in -ldld" >&5
+ $as_echo_n "checking for dld_link in -ldld... " >&6; }
+@@ -12934,7 +12934,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ldld  $LIBS"
++LIBS="-ldld -lpsapi  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -12965,7 +12965,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dld_dld_link" >&5
+ $as_echo "$ac_cv_lib_dld_dld_link" >&6; }
+ if test "x$ac_cv_lib_dld_dld_link" = xyes; then :
+-  lt_cv_dlopen=dld_link lt_cv_dlopen_libs=-ldld
++  lt_cv_dlopen=dld_link lt_cv_dlopen_libs="-ldld -lpsapi"
+ fi
+ 
+ 
+@@ -13001,7 +13001,7 @@
+     wl=$lt_prog_compiler_wl eval LDFLAGS=\"\$LDFLAGS $export_dynamic_flag_spec\"
+ 
+     save_LIBS=$LIBS
+-    LIBS="$lt_cv_dlopen_libs $LIBS"
++    LIBS="$lt_cv_dlopen_libs -lpsapi $LIBS"
+ 
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether a program can dlopen itself" >&5
+ $as_echo_n "checking whether a program can dlopen itself... " >&6; }
+@@ -14477,7 +14477,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ldl  $LIBS"
++LIBS="-ldl -lpsapi  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -14508,7 +14508,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+ $as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+ if test "x$ac_cv_lib_dl_dlopen" = xyes; then :
+-  DLOPEN_LIBS=-ldl
++  DLOPEN_LIBS="-ldl -lpsapi" 
+ fi
+ 
+ 
+@@ -15176,7 +15176,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff  $LIBS"
++LIBS="-ltiff -llzma -ljbig -ljpeg -lz  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -15216,7 +15216,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff -ljpeg -lz -lm $LIBS"
++LIBS="-ltiff -llzma -ljbig -ljpeg -lz -lm $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -15247,7 +15247,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_tiff_TIFFReadScanline" >&5
+ $as_echo "$ac_cv_lib_tiff_TIFFReadScanline" >&6; }
+ if test "x$ac_cv_lib_tiff_TIFFReadScanline" = xyes; then :
+-  tiff_libs="-ltiff -ljpeg -lz -lm"
++  tiff_libs="-ltiff -llzma -ljbig -ljpeg -lz -lm"
+     tiff_ok=yes
+ else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TIFFReadScanline in -ltiff34" >&5
+@@ -15256,7 +15256,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff34 -ljpeg -lz -lm $LIBS"
++LIBS="-ltiff34 -llzma -ljbig -ljpeg -lz -lm $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -15287,7 +15287,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_tiff34_TIFFReadScanline" >&5
+ $as_echo "$ac_cv_lib_tiff34_TIFFReadScanline" >&6; }
+ if test "x$ac_cv_lib_tiff34_TIFFReadScanline" = xyes; then :
+-  tiff_libs="-ltiff34 -ljpeg -lz -lm"
++  tiff_libs="-ltiff34 -llzma -ljbig -ljpeg -lz -lm"
+     tiff_ok=yes
+ else
+   tiff_ok=no
+@@ -15885,6 +15885,7 @@
+     fi
+   else
+     enable_visibility_hiding=no
++    $as_echo "#define __EXPORT__ " >>confdefs.h
+   fi
+ 
+ 
+diff -Naur imlib2-1.5.1.old/src/bin/imlib2_conv.c imlib2-1.5.1/src/bin/imlib2_conv.c
+--- imlib2-1.5.1.old/src/bin/imlib2_conv.c	2018-05-30 16:24:37.279826344 -0700
++++ imlib2-1.5.1/src/bin/imlib2_conv.c	2018-06-02 17:09:50.391957706 -0700
+@@ -17,6 +17,23 @@
+ 
+ static void         usage(int exit_status);
+ 
++static char *
++strndup (const char *s, size_t n)
++{
++  char *result;
++  size_t len = strlen (s);
++
++  if (n < len)
++    len = n;
++
++  result = (char *) malloc (len + 1);
++  if (!result)
++    return 0;
++
++  result[len] = '\0';
++  return (char *) memcpy (result, s, len);
++}
++
+ int
+ main(int argc, char **argv)
+ {
+diff -Naur imlib2-1.5.1.old/src/lib/file.c imlib2-1.5.1/src/lib/file.c
+--- imlib2-1.5.1.old/src/lib/file.c	2018-05-30 16:24:37.279826344 -0700
++++ imlib2-1.5.1/src/lib/file.c	2018-06-02 15:36:07.209635988 -0700
+@@ -2,7 +2,9 @@
+ 
+ #include <ctype.h>
+ #include <dirent.h>
++#if (!defined(_WIN16) && !defined(_WIN32) && !defined(_WIN64) && !defined(__WIN32__) && !defined(__TOS_WIN__) && !defined(__WINDOWS__)) || defined(__CYGWIN__)
+ #include <pwd.h>
++#endif
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -12,6 +14,14 @@
+ 
+ #include "file.h"
+ 
++#if (defined(_WIN16) || defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)) && !defined(__CYGWIN__)
++#include <windows.h>
++#include <mq.h> // MQ_* constants.
++#include <lmcons.h> // UNLEN 
++
++#include <sddl.h> // convertSidToStringSid
++#endif
++
+ char               *
+ __imlib_FileKey(const char *file)
+ {
+@@ -373,6 +383,7 @@
+    if (s)
+       return strdup(s);
+ 
++#if (!defined(_WIN16) && !defined(_WIN32) && !defined(_WIN64) && !defined(__WIN32__) && !defined(__TOS_WIN__) && !defined(__WINDOWS__)) || defined(__CYGWIN__)
+    if (usr_uid < 0)
+       usr_uid = getuid();
+ 
+@@ -389,6 +400,7 @@
+            usr_s = strdup(s);
+         return s;
+      }
++#endif
+ 
+    return NULL;
+ }
+diff -Naur imlib2-1.5.1.old/src/lib/Imlib2.h imlib2-1.5.1/src/lib/Imlib2.h
+--- imlib2-1.5.1.old/src/lib/Imlib2.h	2018-05-30 16:24:37.279826344 -0700
++++ imlib2-1.5.1/src/lib/Imlib2.h	2018-06-02 17:02:04.050307099 -0700
+@@ -6,14 +6,17 @@
+ #endif
+ #ifdef WIN32
+ #ifdef BUILDING_DLL
+-#define EAPI __declspec(dllexport)
++//#define EAPI __declspec(dllexport)
++#define EAPI
+ #else
+-#define EAPI __declspec(dllimport)
++//#define EAPI __declspec(dllimport)
++#define EAPI
+ #endif
+ #else
+ #ifdef __GNUC__
+ #if __GNUC__ >= 4
+-#define EAPI __attribute__ ((visibility("default")))
++//#define EAPI __attribute__ ((visibility("default")))
++#define EAPI
+ #else
+ #define EAPI
+ #endif
+diff -Naur imlib2-1.5.1.old/src/modules/loaders/loader_ff.c imlib2-1.5.1/src/modules/loaders/loader_ff.c
+--- imlib2-1.5.1.old/src/modules/loaders/loader_ff.c	2018-05-30 16:24:37.279826344 -0700
++++ imlib2-1.5.1/src/modules/loaders/loader_ff.c	2018-06-02 17:34:29.650672113 -0700
+@@ -1,5 +1,9 @@
+ /* Farbfeld (http://tools.suckless.org/farbfeld) */
++#ifdef WIN32
++#include <winsock2.h>
++#else
+ #include <arpa/inet.h>
++#endif
+ #include <stdint.h>
+ 
+ #include "loader_common.h"
+diff -Naur imlib2-1.5.1.old/src/modules/loaders/loader_jpeg.c imlib2-1.5.1/src/modules/loaders/loader_jpeg.c
+--- imlib2-1.5.1.old/src/modules/loaders/loader_jpeg.c	2018-05-30 16:24:37.279826344 -0700
++++ imlib2-1.5.1/src/modules/loaders/loader_jpeg.c	2018-06-02 17:30:29.744985308 -0700
+@@ -2,6 +2,15 @@
+ #include <jpeglib.h>
+ #include <setjmp.h>
+ 
++/* QEMU uses sigsetjmp()/siglongjmp() as the portable way to specify
++ * "longjmp and don't touch the signal masks". Since we know that the
++ * savemask parameter will always be zero we can safely define these
++ * in terms of setjmp/longjmp on Win32.
++ */
++#define sigjmp_buf jmp_buf
++#define sigsetjmp(env, savemask) setjmp(env)
++#define siglongjmp(env, val) longjmp(env, val)
++
+ struct ImLib_JPEG_error_mgr {
+    struct jpeg_error_mgr pub;
+    sigjmp_buf          setjmp_buffer;

@@ -544,6 +544,7 @@ find_all_build_exes() {
 build_dependencies() {
   echo "Building dosbox dependency libraries..."
   build_dlfcn
+  build_mman
   build_bzip2 # Bzlib (bzip2) in FFmpeg is autodetected.
   build_liblzma # Lzma in FFmpeg is autodetected. Uses dlfcn.
   build_zlib # Zlib in FFmpeg is autodetected.
@@ -562,7 +563,7 @@ build_dependencies() {
   build_libid3tag
   build_harfbuzz
   build_freetype
-  #build_imlib2
+  build_imlib2
   #build_directfb
   #build_sdl
 }
@@ -586,8 +587,19 @@ build_dlfcn() {
   fi
 }
 
-#build_mman() {
-#}
+build_mman() {
+  if [ ! -e mman ]; then
+    do_git_checkout https://github.com/witwall/mman-win32.git
+    cd mman-win32_git
+      apply_patch file://$patch_dir/mman-win32.configure.patch -p1
+      chmod a+x ./configure
+      do_configure "--prefix=$mingw_w64_x86_64_prefix --disable-shared --enable-static --bindir=$mingw_w64_x86_64_prefix/bin --libdir=$mingw_w64_x86_64_prefix/lib --incdir=$mingw_w64_x86_64_prefix/include/sys"
+      do_make_and_make_install "$make_prefix_options"
+      do_make_and_make_install "$make_prefix_options install"
+    cd ..
+    touch mman
+  fi
+}
 
 build_bzip2() {
   if [ ! -e bzip2 ]; then
@@ -791,17 +803,17 @@ build_freetype() {
   cd ..
 }
 
-#build_imlib2() {
-#  if [ ! -e imlib2 ]; then
-#    download_and_unpack_file https://downloads.sourceforge.net/enlightenment/imlib2-1.5.1.tar.bz2
-#    apply_patch file://$patch_dir/imlib2_configfix.diff
-#    cd imlib2-1.5.1
-#      generic_configure "--disable-shared --enable-static --without-x --disable-mmx --disable-visibility-hiding"
-#      do_make_and_make_install
-#    cd ..
-#    touch imlib2
-#  fi
-#}
+build_imlib2() {
+  if [ ! -e imlib2 ]; then
+    download_and_unpack_file https://downloads.sourceforge.net/enlightenment/imlib2-1.5.1.tar.bz2
+    apply_patch file://$patch_dir/imlib2_configfix.diff
+    cd imlib2-1.5.1
+      generic_configure "--disable-shared --enable-static --without-x --disable-mmx --disable-amd64 --disable-visibility-hiding"
+      do_make_and_make_install
+    cd ..
+    touch imlib2
+  fi
+}
 
 build_directfb() {
   # apparently ffmpeg expects prefix-sdl-config not sdl-config that they give us, so rename...
