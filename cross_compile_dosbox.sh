@@ -569,6 +569,8 @@ build_dependencies() {
   build_libxml2
   build_fontconfig
   build_glib120
+  build_gettext
+  build_glib214
   #build_cairo
   #build_directfb
   #build_sdl
@@ -870,6 +872,32 @@ build_glib120() {
       do_make_and_make_install
     cd ..
     touch glib120 
+  fi
+}
+
+build_gettext() {
+  if [ ! -e gettext ]; then
+    download_and_unpack_file https://ftp.gnu.org/pub/gnu/gettext/gettext-0.19.8.tar.gz
+    cd gettext-0.19.8
+      export CFLAGS="${CFLAGS} -DLIBXML_STATIC"
+      generic_configure
+      do_make_and_make_install
+      reset_cflags
+    cd ..
+    touch gettext
+  fi
+}
+
+build_glib214() {
+  if [ ! -e glib214 ]; then
+    download_and_unpack_file https://download.gnome.org/sources/glib/2.14/glib-2.14.6.tar.gz
+    apply_patch file://$patch_dir/glib-2.14.6.diff
+    cd glib-2.14.6
+      chmod a-w win32.cache   # prevent configure from changing it
+      generic_configure
+      do_make_and_make_install
+    cd ..
+    touch glib214
   fi
 }
 

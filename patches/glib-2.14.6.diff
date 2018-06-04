@@ -1,0 +1,264 @@
+diff -Naur glib-2.14.6.old/configure glib-2.14.6/configure
+--- glib-2.14.6.old/configure	2018-06-03 17:19:17.464744046 -0700
++++ glib-2.14.6/configure	2018-06-03 19:57:04.313430266 -0700
+@@ -4566,18 +4566,18 @@
+ echo "${ECHO_T}yes" >&6; }
+ fi
+ 
+-if test "$glib_native_win32" = "yes"; then
+-  if test x$enable_static = xyes -o x$enable_static = x; then
+-    { echo "$as_me:$LINENO: WARNING: Disabling static library build, must build as DLL on Windows." >&5
+-echo "$as_me: WARNING: Disabling static library build, must build as DLL on Windows." >&2;}
+-    enable_static=no
+-  fi
+-  if test x$enable_shared = xno; then
+-    { echo "$as_me:$LINENO: WARNING: Enabling shared library build, must build as DLL on Windows." >&5
+-echo "$as_me: WARNING: Enabling shared library build, must build as DLL on Windows." >&2;}
+-  fi
+-  enable_shared=yes
+-fi
++#if test "$glib_native_win32" = "yes"; then
++#  if test x$enable_static = xyes -o x$enable_static = x; then
++#    { echo "$as_me:$LINENO: WARNING: Disabling static library build, must build as DLL on Windows." >&5
++#echo "$as_me: WARNING: Disabling static library build, must build as DLL on Windows." >&2;}
++#    enable_static=no
++#  fi
++#  if test x$enable_shared = xno; then
++#    { echo "$as_me:$LINENO: WARNING: Enabling shared library build, must build as DLL on Windows." >&5
++#echo "$as_me: WARNING: Enabling shared library build, must build as DLL on Windows." >&2;}
++#  fi
++#  enable_shared=yes
++#fi
+ 
+ ac_ext=c
+ ac_cpp='$CPP $CPPFLAGS'
+@@ -8297,7 +8297,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl  $LIBS"
++LIBS="-lintl -lpthread  $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -8359,7 +8359,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl  $LIBS"
++LIBS="-lintl -lpthread  $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -8421,7 +8421,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl  $LIBS"
++LIBS="-lintl -lpthread  $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -8496,7 +8496,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl -liconv $LIBS"
++LIBS="-lintl -liconv -lpthread $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -8558,7 +8558,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl -liconv $LIBS"
++LIBS="-lintl -liconv -lpthread $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -8633,7 +8633,7 @@
+         #
+         if test "$gt_cv_func_dgettext_libintl" = "yes" ; then
+           glib_save_LIBS="$LIBS"
+-          LIBS="$LIBS -lintl $libintl_extra_libs"
++          LIBS="$LIBS -lintl -lpthread $libintl_extra_libs"
+           unset ac_cv_func_bind_textdomain_codeset
+ 
+ for ac_func in bind_textdomain_codeset
+@@ -8748,7 +8748,7 @@
+       fi
+ 
+       if test "$gt_cv_func_dgettext_libintl" = "yes"; then
+-        INTLLIBS="-lintl $libintl_extra_libs"
++        INTLLIBS="-lintl -lpthread $libintl_extra_libs"
+       fi
+ 
+       if test "$gt_cv_have_gettext" = "yes"; then
+@@ -29210,13 +29210,13 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+ 
+-        if test "$cross_compiling" = yes; then
+-  { { echo "$as_me:$LINENO: error: cannot run test program while cross compiling
+-See \`config.log' for more details." >&5
+-echo "$as_me: error: cannot run test program while cross compiling
+-See \`config.log' for more details." >&2;}
+-   { (exit 1); exit 1; }; }
+-else
++#        if test "$cross_compiling" = yes; then
++#  { { echo "$as_me:$LINENO: error: cannot run test program while cross compiling
++#See \`config.log' for more details." >&5
++#echo "$as_me: error: cannot run test program while cross compiling
++#See \`config.log' for more details." >&2;}
++#   { (exit 1); exit 1; }; }
++#else
+   cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -29246,7 +29246,7 @@
+   *) ac_try_echo=$ac_try;;
+ esac
+ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+-  (eval "$ac_try") 2>&5
++  (eval "wineconsole $ac_try") 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; }; then
+@@ -29262,7 +29262,7 @@
+ 
+ fi
+ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+-fi
++#fi
+ 
+ 
+ 
+@@ -31539,6 +31539,9 @@
+   $ac_cv_sizeof_long)
+       glib_size_type=long
+       ;;
++  $ac_cv_sizeof___int64)
++      glib_size_type=__int64
++      ;;
+   *)  { { echo "$as_me:$LINENO: error: No type matching size_t in size" >&5
+ echo "$as_me: error: No type matching size_t in size" >&2;}
+    { (exit 1); exit 1; }; }
+@@ -41741,6 +41744,12 @@
+   gssize_format='"li"'
+   glib_msize_type='LONG'
+   ;;
++__int64)
++  gsize_modifier='"'$glib_cv_long_long_format'"'
++  gsize_format='"'$glib_cv_long_long_format'u"'
++  gssize_format='"'$glib_cv_long_long_format'i"'
++  glib_msize_type='INT64'
++  ;;
+ esac
+ 
+ gintbits=`expr $ac_cv_sizeof_int \* 8`
+@@ -41750,6 +41759,7 @@
+ case $ac_cv_sizeof_void_p in
+ $ac_cv_sizeof_int)  	glib_gpi_cast=''        glib_gpui_cast=''         ;;
+ $ac_cv_sizeof_long) 	glib_gpi_cast='(glong)' glib_gpui_cast='(gulong)' ;;
++$ac_cv_sizeof___int64) 	glib_gpi_cast='(gint64)' glib_gpui_cast='(guint64)' ;;
+ *) 			glib_unknown_void_p=yes ;;
+ esac
+ 
+diff -Naur glib-2.14.6.old/glib/gspawn-win32.c glib-2.14.6/glib/gspawn-win32.c
+--- glib-2.14.6.old/glib/gspawn-win32.c	2018-06-03 17:19:17.504891617 -0700
++++ glib-2.14.6/glib/gspawn-win32.c	2018-06-03 18:59:16.651291702 -0700
+@@ -60,14 +60,6 @@
+ #include <process.h>
+ #include <direct.h>
+ 
+-#ifdef __MINGW32__
+-/* Mingw doesn't have prototypes for these */
+-int _wspawnvpe (int, const wchar_t *, const wchar_t **, const wchar_t **);
+-int _wspawnvp (int, const wchar_t *, const wchar_t **);
+-int _wspawnve (int, const wchar_t *, const wchar_t **, const wchar_t **);
+-int _wspawnv (int, const wchar_t *, const wchar_t **);
+-#endif
+-
+ #ifdef G_SPAWN_WIN32_DEBUG
+   static int debug = 1;
+   #define SETUP_DEBUG() /* empty */
+@@ -255,7 +247,7 @@
+ 
+  again:
+   
+-  giostatus = g_io_channel_read_chars (iochannel, buf, sizeof (buf), &bytes, NULL);
++  giostatus = g_io_channel_read_chars (iochannel, buf, sizeof (buf), (gsize *)(&bytes), NULL);
+ 
+   if (bytes == 0)
+     return READ_EOF;
+diff -Naur glib-2.14.6.old/glib/gtypes.h glib-2.14.6/glib/gtypes.h
+--- glib-2.14.6.old/glib/gtypes.h	2018-06-03 17:19:17.504891617 -0700
++++ glib-2.14.6/glib/gtypes.h	2018-06-03 19:14:09.291259363 -0700
+@@ -407,19 +407,19 @@
+  */
+ #ifndef GLIB_VAR
+ #  ifdef G_PLATFORM_WIN32
+-#    ifdef GLIB_STATIC_COMPILATION
++//#    ifdef GLIB_STATIC_COMPILATION
+ #      define GLIB_VAR extern
+-#    else /* !GLIB_STATIC_COMPILATION */
+-#      ifdef GLIB_COMPILATION
+-#        ifdef DLL_EXPORT
+-#          define GLIB_VAR __declspec(dllexport)
+-#        else /* !DLL_EXPORT */
+-#          define GLIB_VAR extern
+-#        endif /* !DLL_EXPORT */
+-#      else /* !GLIB_COMPILATION */
+-#        define GLIB_VAR extern __declspec(dllimport)
+-#      endif /* !GLIB_COMPILATION */
+-#    endif /* !GLIB_STATIC_COMPILATION */
++//#    else /* !GLIB_STATIC_COMPILATION */
++//#      ifdef GLIB_COMPILATION
++//#        ifdef DLL_EXPORT
++//#          define GLIB_VAR __declspec(dllexport)
++//#        else /* !DLL_EXPORT */
++//#          define GLIB_VAR extern
++//#        endif /* !DLL_EXPORT */
++//#      else /* !GLIB_COMPILATION */
++//#        define GLIB_VAR extern __declspec(dllimport)
++//#      endif /* !GLIB_COMPILATION */
++//#    endif /* !GLIB_STATIC_COMPILATION */
+ #  else /* !G_PLATFORM_WIN32 */
+ #    define GLIB_VAR extern
+ #  endif /* !G_PLATFORM_WIN32 */
+diff -Naur glib-2.14.6.old/gobject/gparamspecs.h glib-2.14.6/gobject/gparamspecs.h
+--- glib-2.14.6.old/gobject/gparamspecs.h	2018-06-03 17:19:17.512921131 -0700
++++ glib-2.14.6/gobject/gparamspecs.h	2018-06-03 19:14:58.234584196 -0700
+@@ -414,19 +414,19 @@
+  */
+ #ifndef GOBJECT_VAR
+ #  ifdef G_PLATFORM_WIN32
+-#    ifdef GOBJECT_STATIC_COMPILATION
++//#    ifdef GOBJECT_STATIC_COMPILATION
+ #      define GOBJECT_VAR extern
+-#    else /* !GOBJECT_STATIC_COMPILATION */
+-#      ifdef GOBJECT_COMPILATION
+-#        ifdef DLL_EXPORT
+-#          define GOBJECT_VAR __declspec(dllexport)
+-#        else /* !DLL_EXPORT */
+-#          define GOBJECT_VAR extern
+-#        endif /* !DLL_EXPORT */
+-#      else /* !GOBJECT_COMPILATION */
+-#        define GOBJECT_VAR extern __declspec(dllimport)
+-#      endif /* !GOBJECT_COMPILATION */
+-#    endif /* !GOBJECT_STATIC_COMPILATION */
++//#    else /* !GOBJECT_STATIC_COMPILATION */
++//#      ifdef GOBJECT_COMPILATION
++//#        ifdef DLL_EXPORT
++//#          define GOBJECT_VAR __declspec(dllexport)
++//#        else /* !DLL_EXPORT */
++//#          define GOBJECT_VAR extern
++//#        endif /* !DLL_EXPORT */
++//#      else /* !GOBJECT_COMPILATION */
++//#        define GOBJECT_VAR extern __declspec(dllimport)
++//#      endif /* !GOBJECT_COMPILATION */
++//#    endif /* !GOBJECT_STATIC_COMPILATION */
+ #  else /* !G_PLATFORM_WIN32 */
+ #    define GOBJECT_VAR extern
+ #  endif /* !G_PLATFORM_WIN32 */
