@@ -1,0 +1,196 @@
+diff -Naur glib-2.57.1.old/configure glib-2.57.1/configure
+--- glib-2.57.1.old/configure	2018-06-04 17:25:11.827583436 -0700
++++ glib-2.57.1/configure	2018-06-04 21:57:38.410907320 -0700
+@@ -8121,7 +8121,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl  $LIBS"
++LIBS="-lintl -lpthread  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -8158,7 +8158,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl  $LIBS"
++LIBS="-lintl -lpthread  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -8195,7 +8195,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl  $LIBS"
++LIBS="-lintl -lpthread  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -8245,7 +8245,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl -liconv $LIBS"
++LIBS="-lintl -liconv -lpthread $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -8282,7 +8282,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lintl -liconv $LIBS"
++LIBS="-lintl -liconv -lpthread $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -8332,7 +8332,7 @@
+         #
+         if test "$gt_cv_func_dgettext_libintl" = "yes" ; then
+           glib_save_LIBS="$LIBS"
+-          LIBS="$LIBS -lintl $libintl_extra_libs"
++          LIBS="$LIBS -lintl -lpthread $libintl_extra_libs"
+           unset ac_cv_func_bind_textdomain_codeset
+           for ac_func in bind_textdomain_codeset
+ do :
+@@ -8364,7 +8364,7 @@
+       fi
+ 
+       if test "$gt_cv_func_dgettext_libintl" = "yes"; then
+-        INTLLIBS="-lintl $libintl_extra_libs $INTL_MACOSX_LIBS"
++        INTLLIBS="-lintl -lpthread $libintl_extra_libs $INTL_MACOSX_LIBS"
+       fi
+ 
+       if test "$gt_cv_have_gettext" = "yes"; then
+@@ -22169,7 +22169,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+ 
+-		for format in ll q I64; do
++		for format in ll; do
+ 		  if test "$cross_compiling" = yes; then :
+   :
+ else
+@@ -22221,7 +22221,7 @@
+ 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for format to printf and scanf a guint64" >&5
+ $as_echo_n "checking for format to printf and scanf a guint64... " >&6; }
+ 	# We know this is MSVCRT.DLL, and what the formats are
+-	glib_cv_long_long_format=I64
++	glib_cv_long_long_format=ll
+ 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: %${glib_cv_long_long_format}u" >&5
+ $as_echo "%${glib_cv_long_long_format}u" >&6; }
+ 
+@@ -31136,9 +31136,9 @@
+   glib_msize_type='LONG'
+   ;;
+ "long long"|__int64)
+-  gsize_modifier='"I64"'
+-  gsize_format='"I64u"'
+-  glib_msize_type='INT64'
++  gsize_modifier='"ll"'
++  gsize_format='"llu"'
++  glib_msize_type='LLONG'
+   ;;
+ esac
+ 
+@@ -31159,9 +31159,9 @@
+   glib_mssize_type='LONG'
+   ;;
+ "long long"|__int64)
+-  gssize_modifier='"I64"'
+-  gssize_format='"I64i"'
+-  glib_mssize_type='INT64'
++  gssize_modifier='"ll"'
++  gssize_format='"lli"'
++  glib_mssize_type='LLONG'
+   ;;
+ esac
+ 
+@@ -31189,17 +31189,17 @@
+   ;;
+ $ac_cv_sizeof_long_long)
+   glib_intptr_type_define='long long'
+-  gintptr_modifier='"I64"'
+-  gintptr_format='"I64i"'
+-  guintptr_format='"I64u"'
++  gintptr_modifier='"ll"'
++  gintptr_format='"lli"'
++  guintptr_format='"llu"'
+   glib_gpi_cast='(gint64)'
+   glib_gpui_cast='(guint64)'
+   ;;
+ $ac_cv_sizeof___int64)
+   glib_intptr_type_define=__int64
+-  gintptr_modifier='"I64"'
+-  gintptr_format='"I64i"'
+-  guintptr_format='"I64u"'
++  gintptr_modifier='"ll"'
++  gintptr_format='"lli"'
++  guintptr_format='"llu"'
+   glib_gpi_cast='(gint64)'
+   glib_gpui_cast='(guint64)'
+   ;;
+diff -Naur glib-2.57.1.old/glib/glibconfig.h.win32 glib-2.57.1/glib/glibconfig.h.win32
+--- glib-2.57.1.old/glib/glibconfig.h.win32	2018-06-04 17:25:11.639366944 -0700
++++ glib-2.57.1/glib/glibconfig.h.win32	2018-06-04 21:38:36.093110587 -0700
+@@ -58,9 +58,9 @@
+ 
+ #define G_GINT64_CONSTANT(val)	(G_GNUC_EXTENSION (val##LL))
+ #define G_GUINT64_CONSTANT(val)	(G_GNUC_EXTENSION (val##ULL))
+-#define G_GINT64_MODIFIER "I64"
+-#define G_GINT64_FORMAT "I64i"
+-#define G_GUINT64_FORMAT "I64u"
++#define G_GINT64_MODIFIER "ll"
++#define G_GINT64_FORMAT "lli"
++#define G_GUINT64_FORMAT "llu"
+ 
+ #if defined(_WIN64) || defined(_M_X64) || defined(_M_AMD64)
+ 
+@@ -70,10 +70,10 @@
+ 
+ typedef signed long long gssize;
+ typedef unsigned long long gsize;
+-#define G_GSIZE_MODIFIER "I64"
+-#define G_GSSIZE_MODIFIER "I64"
+-#define G_GSIZE_FORMAT "I64u"
+-#define G_GSSIZE_FORMAT "I64i"
++#define G_GSIZE_MODIFIER "ll"
++#define G_GSSIZE_MODIFIER "ll"
++#define G_GSIZE_FORMAT "llu"
++#define G_GSSIZE_FORMAT "lli"
+ 
+ #define G_MAXSIZE	G_MAXUINT64
+ #define G_MINSSIZE	G_MININT64
+diff -Naur glib-2.57.1.old/glib/glibconfig.h.win32.in glib-2.57.1/glib/glibconfig.h.win32.in
+--- glib-2.57.1.old/glib/glibconfig.h.win32.in	2018-06-04 17:25:11.671403793 -0700
++++ glib-2.57.1/glib/glibconfig.h.win32.in	2018-06-04 21:33:38.811358765 -0700
+@@ -58,9 +58,9 @@
+ 
+ #define G_GINT64_CONSTANT(val)	(G_GNUC_EXTENSION (val##LL))
+ #define G_GUINT64_CONSTANT(val)	(G_GNUC_EXTENSION (val##ULL))
+-#define G_GINT64_MODIFIER "I64"
+-#define G_GINT64_FORMAT "I64i"
+-#define G_GUINT64_FORMAT "I64u"
++#define G_GINT64_MODIFIER "ll"
++#define G_GINT64_FORMAT "lli"
++#define G_GUINT64_FORMAT "llu"
+ 
+ #if defined(_WIN64) || defined(_M_X64) || defined(_M_AMD64)
+ 
+@@ -70,10 +70,10 @@
+ 
+ typedef signed long long gssize;
+ typedef unsigned long long gsize;
+-#define G_GSIZE_MODIFIER "I64"
+-#define G_GSSIZE_MODIFIER "I64"
+-#define G_GSIZE_FORMAT "I64u"
+-#define G_GSSIZE_FORMAT "I64i"
++#define G_GSIZE_MODIFIER "ll"
++#define G_GSSIZE_MODIFIER "ll"
++#define G_GSIZE_FORMAT "llu"
++#define G_GSSIZE_FORMAT "lli"
+ 
+ #define G_MAXSIZE	G_MAXUINT64
+ #define G_MINSSIZE	G_MININT64

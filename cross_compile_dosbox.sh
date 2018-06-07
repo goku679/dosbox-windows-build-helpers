@@ -27,7 +27,7 @@ check_missing_packages () {
     VENDOR="redhat"
   fi
   # zeranoe's build scripts use wget, though we don't here...
-  local check_packages=('curl' 'pkg-config' 'make' 'git' 'svn' 'gcc' 'autoconf' 'automake' 'yasm' 'cvs' 'flex' 'bison' 'makeinfo' 'g++' 'ed' 'hg' 'pax' 'unzip' 'patch' 'wget' 'xz' 'nasm' 'gperf' 'autogen' 'bzip2')  
+  local check_packages=('curl' 'pkg-config' 'make' 'git' 'svn' 'gcc' 'autoconf' 'automake' 'yasm' 'cvs' 'flex' 'bison' 'makeinfo' 'g++' 'ed' 'hg' 'pax' 'unzip' 'patch' 'wget' 'xz' 'nasm' 'gperf' 'autogen' 'bzip2' 'cargo')  
   # autoconf-archive is just for leptonica FWIW
   # I'm not actually sure if VENDOR being set to centos is a thing or not. On all the centos boxes I can test on it's not been set at all.
   # that being said, if it where set I would imagine it would be set to centos... And this contition will satisfy the "Is not initially set"
@@ -52,11 +52,11 @@ check_missing_packages () {
     clear
     echo "Could not find the following execs (svn is actually package subversion, makeinfo is actually package texinfo, hg is actually package mercurial if you're missing them): ${missing_packages[*]}"
     echo 'Install the missing packages before running this script.'
-    echo "for ubuntu: $ sudo apt-get install subversion curl texinfo g++ bison flex cvs yasm automake libtool autoconf gcc cmake git make pkg-config zlib1g-dev mercurial unzip pax nasm gperf autogen bzip2 autoconf-archive -y"
+    echo "for ubuntu: $ sudo apt-get install subversion curl texinfo g++ bison flex cvs yasm automake libtool autoconf gcc cmake git make pkg-config zlib1g-dev mercurial unzip pax nasm gperf autogen bzip2 cargo autoconf-archive -y"
     echo "for gentoo (a non ubuntu distro): same as above, but no g++, no gcc, git is dev-vcs/git, zlib1g-dev is zlib, pkg-config is dev-util/pkgconfig, add ed..."
-    echo "for OS X (homebrew): brew install wget cvs hg yasm autogen automake autoconf cmake hg libtool xz pkg-config nasm bzip2 autoconf-archive"
+    echo "for OS X (homebrew): brew install wget cvs hg yasm autogen automake autoconf cmake hg libtool xz pkg-config nasm bzip2 cargo autoconf-archive"
     echo "for debian: same as ubuntu, but also add libtool-bin and ed"
-    echo "for RHEL/CentOS: First ensure you have epel repos available, then run $ sudo yum install subversion texinfo mercurial libtool autogen gperf nasm patch unzip pax ed gcc-c++ bison flex yasm automake autoconf gcc zlib-devel cvs bzip2 cmake3 -y"
+    echo "for RHEL/CentOS: First ensure you have epel repos available, then run $ sudo yum install subversion texinfo mercurial libtool autogen gperf nasm patch unzip pax ed gcc-c++ bison flex yasm automake autoconf gcc zlib-devel cvs bzip2 cargo cmake3 -y"
     echo "for fedora: if your distribution comes with a modern version of cmake then use the same as RHEL/CentOS but replace cmake3 with cmake."
     exit 1
   fi
@@ -568,9 +568,16 @@ build_dependencies() {
   build_iconv
   build_libxml2
   build_fontconfig
-  build_glib120
+  #build_glib120
   build_gettext
-  build_glib214
+  #build_glib214
+  build_libcurl
+  build_cairo
+  build_pcre
+  build_libffi
+  #build_glib257
+  #build_librsvg
+  #build_poppler
   #build_cairo
   #build_directfb
   #build_sdl
@@ -893,7 +900,6 @@ build_glib214() {
     download_and_unpack_file https://download.gnome.org/sources/glib/2.14/glib-2.14.6.tar.gz
     apply_patch file://$patch_dir/glib-2.14.6.diff
     cd glib-2.14.6
-      chmod a-w win32.cache   # prevent configure from changing it
       generic_configure
       do_make_and_make_install
     cd ..
@@ -901,17 +907,89 @@ build_glib214() {
   fi
 }
 
+build_libcurl() {
+  generic_download_and_make_and_install https://curl.haxx.se/download/curl-7.46.0.tar.gz
+}
+
 build_cairo() {
   if [ ! -e cairo ]; then
     download_and_unpack_file https://www.cairographics.org/releases/cairo-1.14.12.tar.xz
     cd cairo-1.14.12
-      generic_configure "--enable-tee=yes --enable-xml=yes --enable-gobject=yes --enable-svg=yes --enable-pdf=yes --enable-ps=yes --enable-fc=yes --enable-ft=yes --enable-script=yes --enable-png=yes"
+      generic_configure "--enable-tee=yes --enable-xml=yes --enable-fc=yes --enable-ft=yes --enable-script=yes --enable-png=yes --enable-svg=no --enable-pdf=no --enable-ps=no --enable-gobject=no"
+      do_make_and_make_install
+    cd ..
+    touch cairo
+  fi
+}
+
+build_pcre() {
+  if [ ! -e pcre ]; then
+    download_and_unpack_file https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz
+    cd pcre-8.42
+      generic_configure "--enable-pcre16 --enable-pcre32 --enable-jit --enable-utf --enable-unicode-properties"
+      do_make_and_make_install
+    cd ..
+    touch pcre 
+  fi
+}
+
+build_libffi() {
+  if [ ! -e libffi ]; then
+    download_and_unpack_file https://sourceware.org/ftp/libffi/libffi-3.2.1.tar.gz
+    cd libffi-3.2.1
+      generic_configure 
+      do_make_and_make_install
+    cd ..
+    touch libffi 
+  fi
+}
+
+build_glib257() {
+  if [ ! -e glib257 ]; then
+    download_and_unpack_file https://download.gnome.org/sources/glib/2.57/glib-2.57.1.tar.xz
+    apply_patch file://$patch_dir/glib-2.57.1.diff
+    cd glib-2.57.1
+      generic_configure 
+      do_make_and_make_install V=1
+    cd ..
+    touch glib257 
+  fi
+}
+
+build_librsvg() {
+  if [ ! -e librsvg ]; then
+    download_and_unpack_file http://ftp.gnome.org/pub/gnome/sources/librsvg/2.42/librsvg-2.42.2.tar.xz
+    cd librsvg-2.42.2
+      generic_configure
       do_make_and_make_install
     cd ..
     exit 1
-    touch cairo 
+    touch librsvg 
   fi
 }
+
+build_poppler() {
+  if [ ! -e poppler ]; then
+    download_and_unpack_file https://poppler.freedesktop.org/poppler-0.65.0.tar.xz
+    cd poppler-0.65.0
+      do_cmake_and_install "-DBUILD_SHARED_LIBS=0 -DENABLE_QT5=0"
+    cd ..
+    exit 1
+    touch poppler
+  fi
+}
+
+#build_cairo() {
+#  if [ ! -e cairo ]; then
+#    download_and_unpack_file https://www.cairographics.org/releases/cairo-1.14.12.tar.xz
+#    cd cairo-1.14.12
+#      generic_configure "--enable-tee=yes --enable-xml=yes --enable-gobject=yes --enable-svg=yes --enable-pdf=yes --enable-ps=yes --enable-fc=yes --enable-ft=yes --enable-script=yes --enable-png=yes"
+#      do_make_and_make_install
+#    cd ..
+#    exit 1
+#    touch cairo 
+#  fi
+#}
 
 build_directfb() {
   # apparently ffmpeg expects prefix-sdl-config not sdl-config that they give us, so rename...
