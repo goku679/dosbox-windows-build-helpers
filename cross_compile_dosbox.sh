@@ -580,7 +580,10 @@ build_dependencies() {
   #build_poppler
   #build_cairo
   #build_directfb
-  #build_sdl
+  build_libwebp
+  build_sdl
+  build_sdl_net
+  build_sdl_image
 }
 
 build_apps() {
@@ -996,21 +999,64 @@ build_directfb() {
   generic_download_and_make_and_install https://src.fedoraproject.org/repo/pkgs/directfb/DirectFB-1.6.3.tar.gz/md5/641e8e999c017770da647f9b5b890906/DirectFB-1.6.3.tar.gz
 }
 
+build_libwebp() {
+  do_git_checkout https://chromium.googlesource.com/webm/libwebp.git
+  cd libwebp_git
+    git checkout 84947197be604ab893e86ce96b22111953b69435
+    export LIBPNG_CONFIG="$mingw_w64_x86_64_prefix/bin/libpng-config --static" # LibPNG somehow doesn't get autodetected.
+    generic_configure "--disable-wic"
+    do_make_and_make_install
+    unset LIBPNG_CONFIG
+  cd ..
+}
+
 build_sdl() {
   # apparently ffmpeg expects prefix-sdl-config not sdl-config that they give us, so rename...
   export CFLAGS=-DDECLSPEC=  # avoid SDL trac tickets 939 and 282, and not worried about optimizing yet...
-  generic_download_and_configure https://www.libsdl.org/release/SDL-1.2.15.tar.gz
-#  generic_download_and_make_and_install https://www.libsdl.org/release/SDL-1.2.15.tar.gz
-#  reset_cflags
-#  mkdir -p temp
-#  cd temp # so paths will work out right
-#  local prefix=$(basename $cross_prefix)
-#  local bin_dir=$(dirname $cross_prefix)
-#  sed -i.bak "s/-mwindows//" "$PKG_CONFIG_PATH/sdl.pc" # allow ffmpeg to output anything to console :|
-#  sed -i.bak "s/-mwindows//" "$mingw_w64_x86_64_prefix/bin/sdl-config" # update this one too for good measure, FFmpeg can use either, not sure which one it defaults to...
-#  cp "$mingw_w64_x86_64_prefix/bin/sdl-config" "$bin_dir/${prefix}sdl-config" # this is the only mingw dir in the PATH so use it for now [though FFmpeg doesn't use it?]
-#  cd ..
-#  rmdir temp
+#  generic_download_and_configure https://www.libsdl.org/release/SDL-1.2.15.tar.gz
+  generic_download_and_make_and_install https://www.libsdl.org/release/SDL-1.2.15.tar.gz
+  reset_cflags
+  mkdir -p temp
+  cd temp # so paths will work out right
+  local prefix=$(basename $cross_prefix)
+  local bin_dir=$(dirname $cross_prefix)
+  sed -i.bak "s/-mwindows//" "$PKG_CONFIG_PATH/sdl.pc" # allow ffmpeg to output anything to console :|
+  sed -i.bak "s/Libs:\(.*\)$/Libs:\1-liconv -lm -luser32 -lgdi32 -lwinmm -ldxguid /" "$PKG_CONFIG_PATH/sdl.pc" # allow ffmpeg to output anything to console :|
+  sed -i.bak "s/-mwindows//" "$mingw_w64_x86_64_prefix/bin/sdl-config" # update this one too for good measure, FFmpeg can use either, not sure which one it defaults to...
+  cp "$mingw_w64_x86_64_prefix/bin/sdl-config" "$bin_dir/${prefix}sdl-config" # this is the only mingw dir in the PATH so use it for now [though FFmpeg doesn't use it?]
+  cd ..
+  rmdir temp
+}
+
+build_sdl_net() {
+  # apparently ffmpeg expects prefix-sdl-config not sdl-config that they give us, so rename...
+  export CFLAGS=-DDECLSPEC=  # avoid SDL trac tickets 939 and 282, and not worried about optimizing yet...
+#  generic_download_and_configure https://www.libsdl.org/release/SDL-1.2.15.tar.gz
+  generic_download_and_make_and_install https://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.8.tar.gz
+  reset_cflags
+  mkdir -p temp
+  cd temp # so paths will work out right
+  sed -i.bak "s/-mwindows//" "$PKG_CONFIG_PATH/SDL_net.pc" # allow ffmpeg to output anything to console :|
+  cd ..
+  rmdir temp
+}
+
+build_sdl_image() {
+  # apparently ffmpeg expects prefix-sdl-config not sdl-config that they give us, so rename...
+  export CFLAGS=-DDECLSPEC=  # avoid SDL trac tickets 939 and 282, and not worried about optimizing yet...
+#  generic_download_and_configure https://www.libsdl.org/release/SDL-1.2.15.tar.gz
+  download_and_unpack_file https://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.12.tar.gz
+  apply_patch file://$patch_dir/SDL_image-1.2.12.diff
+  cd SDL_image-1.2.12
+    generic_configure
+    do_make_and_make_install
+  cd ..
+  reset_cflags
+  mkdir -p temp
+  cd temp # so paths will work out right
+  sed -i.bak "s/-mwindows//" "$PKG_CONFIG_PATH/SDL_net.pc" # allow ffmpeg to output anything to console :|
+  cd ..
+  rmdir temp
 }
 
 # set some parameters initial values

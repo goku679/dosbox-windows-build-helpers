@@ -1,0 +1,48 @@
+diff -Naur SDL_image-1.2.12.old/configure SDL_image-1.2.12/configure
+--- SDL_image-1.2.12.old/configure	2018-06-07 16:11:18.585080673 -0700
++++ SDL_image-1.2.12/configure	2018-06-07 17:20:20.009409311 -0700
+@@ -13875,7 +13875,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lpng -lz $LIBS"
++LIBS="-lpng -lz -llzma -ljbig $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -14072,7 +14072,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lpng -lz $LIBS"
++LIBS="-lpng -lz -llzma -ljbig $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -14313,7 +14313,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ltiff -lz $LIBS"
++LIBS="-ltiff -llzma -ljbig -ljpeg -lz $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -14986,7 +14986,7 @@
+             # Disable dynamic jpeg since we're linking it explicitly
+             jpg_lib=''
+         fi
+-        IMG_LIBS="-ltiff -lz $IMG_LIBS"
++        IMG_LIBS="-ltiff -llzma -ljbig -ljpeg -lz $IMG_LIBS"
+     fi
+ fi
+ if test x$enable_jpg = xyes -a x$have_jpg_hdr = xyes -a x$have_jpg_lib = xyes; then
+@@ -15008,7 +15008,7 @@
+ _ACEOF
+ 
+     else
+-        IMG_LIBS="-lpng -lz $IMG_LIBS"
++        IMG_LIBS="-lpng -lz -llzma -ljbig $IMG_LIBS"
+     fi
+ fi
+ 
