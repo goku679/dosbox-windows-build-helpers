@@ -607,6 +607,11 @@ build_dependencies() {
   build_smpeg
   build_libmikmod
   build_libmodplug
+  build_libogg
+  build_libvorbis
+  build_flac
+  build_speexdsp
+  build_speex
   build_sdl_sound
 }
 
@@ -1097,6 +1102,7 @@ build_smpeg() {
 
 build_libmikmod() {
   download_and_unpack_file https://github.com/sezero/mikmod/archive/libmikmod-3.3.11.1.tar.gz mikmod-libmikmod-3.3.11.1
+  apply_patch file://$patch_dir/mikmod-libmikmod-3.3.11.1.diff
   cd mikmod-libmikmod-3.3.11.1/libmikmod
     generic_configure
     do_make_and_make_install
@@ -1105,7 +1111,48 @@ build_libmikmod() {
 
 build_libmodplug() {
   download_and_unpack_file https://sourceforge.net/projects/modplug-xmms/files/libmodplug-0.8.9.0.tar.gz
+  apply_patch file://$patch_dir/libmodplug-0.8.9.0.diff
   cd libmodplug-0.8.9.0
+    generic_configure
+    do_make_and_make_install
+  cd ..
+}
+
+build_libogg() {
+  download_and_unpack_file http://downloads.xiph.org/releases/ogg/libogg-1.3.3.tar.gz
+  cd libogg-1.3.3
+    generic_configure
+    do_make_and_make_install
+  cd ..
+}
+
+build_libvorbis() {
+  download_and_unpack_file http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.6.tar.gz
+  cd libvorbis-1.3.6
+    generic_configure
+    do_make_and_make_install
+  cd ..
+}
+
+build_flac() {
+  download_and_unpack_file http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
+  cd flac-1.3.2
+    generic_configure
+    do_make_and_make_install
+  cd ..
+}
+
+build_speexdsp() {
+  download_and_unpack_file http://downloads.xiph.org/releases/speex/speexdsp-1.2rc3.tar.gz
+  cd speexdsp-1.2rc3
+    generic_configure
+    do_make_and_make_install
+  cd ..
+}
+
+build_speex() {
+  download_and_unpack_file http://downloads.xiph.org/releases/speex/speex-1.2.0.tar.gz
+  cd speex-1.2.0
     generic_configure
     do_make_and_make_install
   cd ..
@@ -1120,7 +1167,6 @@ build_sdl_sound() {
   cd SDL_sound-1.0.3
     export CFLAGS="${CFLAGS} -I$mingw_w64_x86_64_prefix/include -I$mingw_w64_x86_64_prefix/include/smpeg"
     generic_configure
-    exit 1
     do_make_and_make_install
     reset_cflags
   cd ..

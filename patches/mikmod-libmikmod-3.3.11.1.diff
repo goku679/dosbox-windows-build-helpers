@@ -1,0 +1,65 @@
+diff -Naur mikmod-libmikmod-3.3.11.1.old/libmikmod/include/mikmod.h mikmod-libmikmod-3.3.11.1/libmikmod/include/mikmod.h
+--- mikmod-libmikmod-3.3.11.1.old/libmikmod/include/mikmod.h	2018-06-07 22:39:06.593740797 -0700
++++ mikmod-libmikmod-3.3.11.1/libmikmod/include/mikmod.h	2018-06-07 22:43:23.379974725 -0700
+@@ -44,26 +44,26 @@
+  * will be assumed.
+  */
+ #if defined(_WIN32) || defined(__CYGWIN__)
+-# if defined(MIKMOD_BUILD) && defined(DLL_EXPORT)       /* building libmikmod as a dll for windows */
+-#   define MIKMODAPI __declspec(dllexport)
+-# elif defined(MIKMOD_BUILD) || defined(MIKMOD_STATIC)  /* building or using static libmikmod for windows */
++//# if defined(MIKMOD_BUILD) && defined(DLL_EXPORT)       /* building libmikmod as a dll for windows */
++//#   define MIKMODAPI __declspec(dllexport)
++//# elif defined(MIKMOD_BUILD) || defined(MIKMOD_STATIC)  /* building or using static libmikmod for windows */
+ #   define MIKMODAPI
+-# else
+-#   define MIKMODAPI __declspec(dllimport)                      /* using libmikmod dll for windows */
+-# endif
++//# else
++//#   define MIKMODAPI __declspec(dllimport)                      /* using libmikmod dll for windows */
++//# endif
+ #elif defined(__OS2__) && defined(__WATCOMC__)
+-# if defined(MIKMOD_BUILD) && defined(__SW_BD)          /* building libmikmod as a dll for os/2 */
+-#   define MIKMODAPI __declspec(dllexport)
+-# else
++//# if defined(MIKMOD_BUILD) && defined(__SW_BD)          /* building libmikmod as a dll for os/2 */
++//#   define MIKMODAPI __declspec(dllexport)
++//# else
+ #   define MIKMODAPI                                    /* using dll or static libmikmod for os/2 */
+-# endif
++//# endif
+ /* SYM_VISIBILITY should be defined if both the compiler
+  * and the target support the visibility attributes. the
+  * configury does that automatically. for the standalone
+  * makefiles, etc, the developer should add the required
+  * flags, i.e.:  -DSYM_VISIBILITY -fvisibility=hidden  */
+-#elif defined(MIKMOD_BUILD) && defined(SYM_VISIBILITY)
+-#   define MIKMODAPI __attribute__((visibility("default")))
++//#elif defined(MIKMOD_BUILD) && defined(SYM_VISIBILITY)
++//#   define MIKMODAPI __attribute__((visibility("default")))
+ #else
+ #   define MIKMODAPI
+ #endif
+diff -Naur mikmod-libmikmod-3.3.11.1.old/old-mikmod/mmio/include/mmio.h mikmod-libmikmod-3.3.11.1/old-mikmod/mmio/include/mmio.h
+--- mikmod-libmikmod-3.3.11.1.old/old-mikmod/mmio/include/mmio.h	2018-06-07 22:39:06.698441965 -0700
++++ mikmod-libmikmod-3.3.11.1/old-mikmod/mmio/include/mmio.h	2018-06-07 22:40:42.256053552 -0700
+@@ -40,13 +40,13 @@
+ 
+ #ifdef WIN32
+ #ifndef MMEXPORT
+-#ifdef MM_DLL_EXPORT
+-#define MMEXPORT  extern __declspec( dllexport )
+-#elif MIKMOD_STATIC
++//#ifdef MM_DLL_EXPORT
++//#define MMEXPORT  extern __declspec( dllexport )
++//#elif MIKMOD_STATIC
+ #define MMEXPORT  extern
+-#else
+-#define MMEXPORT  extern __declspec( dllimport )
+-#endif
++//#else
++//#define MMEXPORT  extern __declspec( dllimport )
++//#endif
+ #endif
+ #else
+ #define MMEXPORT extern

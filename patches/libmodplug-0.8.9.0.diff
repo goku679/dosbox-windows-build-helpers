@@ -1,0 +1,54 @@
+diff -Naur libmodplug-0.8.9.0.old/src/libmodplug/stdafx.h libmodplug-0.8.9.0/src/libmodplug/stdafx.h
+--- libmodplug-0.8.9.0.old/src/libmodplug/stdafx.h	2018-06-07 22:36:11.957087377 -0700
++++ libmodplug-0.8.9.0/src/libmodplug/stdafx.h	2018-06-07 22:37:00.516788305 -0700
+@@ -125,15 +125,15 @@
+ #endif /* _WIN32 */
+ 
+ #if defined(_WIN32) || defined(__CYGWIN__)
+-# if defined(MODPLUG_BUILD) && defined(DLL_EXPORT)	/* building libmodplug as a dll for windows */
+-#   define MODPLUG_EXPORT __declspec(dllexport)
+-# elif defined(MODPLUG_BUILD) || defined(MODPLUG_STATIC)	/* building or using static libmodplug for windows */
++//# if defined(MODPLUG_BUILD) && defined(DLL_EXPORT)	/* building libmodplug as a dll for windows */
++//#   define MODPLUG_EXPORT __declspec(dllexport)
++//# elif defined(MODPLUG_BUILD) || defined(MODPLUG_STATIC)	/* building or using static libmodplug for windows */
+ #   define MODPLUG_EXPORT
+-# else
+-#   define MODPLUG_EXPORT __declspec(dllimport)			/* using libmodplug dll for windows */
+-# endif
+-#elif defined(MODPLUG_BUILD) && defined(SYM_VISIBILITY)
+-#   define MODPLUG_EXPORT __attribute__((visibility("default")))
++//# else
++//#   define MODPLUG_EXPORT __declspec(dllimport)			/* using libmodplug dll for windows */
++//# endif
++//#elif defined(MODPLUG_BUILD) && defined(SYM_VISIBILITY)
++//#   define MODPLUG_EXPORT __attribute__((visibility("default")))
+ #else
+ #define MODPLUG_EXPORT
+ #endif
+diff -Naur libmodplug-0.8.9.0.old/src/modplug.h libmodplug-0.8.9.0/src/modplug.h
+--- libmodplug-0.8.9.0.old/src/modplug.h	2018-06-07 22:36:11.953083424 -0700
++++ libmodplug-0.8.9.0/src/modplug.h	2018-06-07 22:36:48.908855754 -0700
+@@ -12,15 +12,15 @@
+ #endif
+ 
+ #if defined(_WIN32) || defined(__CYGWIN__)
+-# if defined(MODPLUG_BUILD) && defined(DLL_EXPORT)	/* building libmodplug as a dll for windows */
+-#   define MODPLUG_EXPORT __declspec(dllexport)
+-# elif defined(MODPLUG_BUILD) || defined(MODPLUG_STATIC)	/* building or using static libmodplug for windows */
++//# if defined(MODPLUG_BUILD) && defined(DLL_EXPORT)	/* building libmodplug as a dll for windows */
++//#   define MODPLUG_EXPORT __declspec(dllexport)
++//# elif defined(MODPLUG_BUILD) || defined(MODPLUG_STATIC)	/* building or using static libmodplug for windows */
+ #   define MODPLUG_EXPORT
+-# else
+-#   define MODPLUG_EXPORT __declspec(dllimport)			/* using libmodplug dll for windows */
+-# endif
+-#elif defined(MODPLUG_BUILD) && defined(SYM_VISIBILITY)
+-#   define MODPLUG_EXPORT __attribute__((visibility("default")))
++//# else
++//#   define MODPLUG_EXPORT __declspec(dllimport)			/* using libmodplug dll for windows */
++//# endif
++//#elif defined(MODPLUG_BUILD) && defined(SYM_VISIBILITY)
++//#   define MODPLUG_EXPORT __attribute__((visibility("default")))
+ #else
+ #define MODPLUG_EXPORT
+ #endif
