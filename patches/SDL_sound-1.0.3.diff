@@ -1,0 +1,21 @@
+diff -Naur SDL_sound-1.0.3.old/configure SDL_sound-1.0.3/configure
+--- SDL_sound-1.0.3.old/configure	2018-06-07 21:01:01.188194013 -0700
++++ SDL_sound-1.0.3/configure	2018-06-07 21:15:09.742628801 -0700
+@@ -20147,7 +20147,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lsmpeg  $LIBS"
++LIBS="-lsmpeg -lstdc++  $LIBS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -20207,7 +20207,7 @@
+ fi
+ 
+   if test x$have_smpeg_hdr = xyes -a x$have_smpeg_lib = xyes; then
+-    LIBS="$LIBS -lsmpeg"
++    LIBS="$LIBS -lsmpeg -lstdc++"
+ 
+ cat >>confdefs.h <<\_ACEOF
+ #define SOUND_SUPPORTS_SMPEG 1

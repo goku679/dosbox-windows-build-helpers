@@ -298,6 +298,26 @@ get_small_touchfile_name() { # have to call with assignment like a=$(get_small..
   echo "$touch_name" # bash cruddy return system LOL
 }
 
+do_autogen() {
+  local autogen_name="$1"
+  if [[ "$autogen_name" = "" ]]; then
+    autogen_name="./autogen.sh"
+  fi
+  local cur_dir2=$(pwd)
+  local english_name=$(basename $cur_dir2)
+  local touch_name=$(get_small_touchfile_name autogenned "$autogen_name")
+  if [ ! -f "$touch_name" ]; then
+    # make uninstall # does weird things when run under ffmpeg src so disabled for now...
+
+    echo "autogenning $english_name ($PWD) as PATH=$mingw_bin_path:\$PATH $autogen_name" # say it now in case bootstrap fails etc.
+    rm -f autogenned_* # reset
+    "$autogen_name" || exit 1 # not nice on purpose, so that if some other script is running as nice, this one will get priority :)
+    touch -- "$touch_name"
+  else
+    echo "already autogenned $(basename $cur_dir2)"
+  fi
+}
+
 do_configure() {
   local configure_options="$1"
   local configure_name="$2"
@@ -584,6 +604,10 @@ build_dependencies() {
   build_sdl
   build_sdl_net
   build_sdl_image
+  build_smpeg
+  build_libmikmod
+  build_libmodplug
+  build_sdl_sound
 }
 
 build_apps() {
@@ -1000,14 +1024,16 @@ build_directfb() {
 }
 
 build_libwebp() {
-  do_git_checkout https://chromium.googlesource.com/webm/libwebp.git
-  cd libwebp_git
-    git checkout 84947197be604ab893e86ce96b22111953b69435
-    export LIBPNG_CONFIG="$mingw_w64_x86_64_prefix/bin/libpng-config --static" # LibPNG somehow doesn't get autodetected.
-    generic_configure "--disable-wic"
-    do_make_and_make_install
-    unset LIBPNG_CONFIG
-  cd ..
+  if [ ! -e webp ]; then
+    do_git_checkout https://chromium.googlesource.com/webm/libwebp.git
+    cd libwebp_git
+      git checkout 84947197be604ab893e86ce96b22111953b69435
+      export LIBPNG_CONFIG="$mingw_w64_x86_64_prefix/bin/libpng-config --static" # LibPNG somehow doesn't get autodetected.
+      generic_configure "--disable-wic"
+      do_make_and_make_install
+      unset LIBPNG_CONFIG
+    cd ..
+  fi
 }
 
 build_sdl() {
@@ -1054,7 +1080,53 @@ build_sdl_image() {
   reset_cflags
   mkdir -p temp
   cd temp # so paths will work out right
-  sed -i.bak "s/-mwindows//" "$PKG_CONFIG_PATH/SDL_net.pc" # allow ffmpeg to output anything to console :|
+  sed -i.bak "s/-mwindows//" "$PKG_CONFIG_PATH/SDL_image.pc" # allow ffmpeg to output anything to console :|
+  cd ..
+  rmdir temp
+}
+
+build_smpeg() {
+  do_svn_checkout svn://svn.icculus.org/smpeg/tags/release_0_4_5 smpeg-0.4.5
+  apply_patch file://$patch_dir/smpeg-0.4.5.diff
+  cd smpeg-0.4.5
+    do_autogen
+    generic_configure "--enable-gtk-player=no"
+    do_make_and_make_install
+  cd ..
+}
+
+build_libmikmod() {
+  download_and_unpack_file https://github.com/sezero/mikmod/archive/libmikmod-3.3.11.1.tar.gz mikmod-libmikmod-3.3.11.1
+  cd mikmod-libmikmod-3.3.11.1/libmikmod
+    generic_configure
+    do_make_and_make_install
+  cd ../..
+}
+
+build_libmodplug() {
+  download_and_unpack_file https://sourceforge.net/projects/modplug-xmms/files/libmodplug-0.8.9.0.tar.gz
+  cd libmodplug-0.8.9.0
+    generic_configure
+    do_make_and_make_install
+  cd ..
+}
+
+build_sdl_sound() {
+  # apparently ffmpeg expects prefix-sdl-config not sdl-config that they give us, so rename...
+  export CFLAGS=-DDECLSPEC=  # avoid SDL trac tickets 939 and 282, and not worried about optimizing yet...
+#  generic_download_and_configure https://www.libsdl.org/release/SDL-1.2.15.tar.gz
+  download_and_unpack_file https://www.icculus.org/SDL_sound/downloads/SDL_sound-1.0.3.tar.gz
+  apply_patch file://$patch_dir/SDL_sound-1.0.3.diff
+  cd SDL_sound-1.0.3
+    export CFLAGS="${CFLAGS} -I$mingw_w64_x86_64_prefix/include -I$mingw_w64_x86_64_prefix/include/smpeg"
+    generic_configure
+    exit 1
+    do_make_and_make_install
+    reset_cflags
+  cd ..
+  mkdir -p temp
+  cd temp # so paths will work out right
+  sed -i.bak "s/-mwindows//" "$PKG_CONFIG_PATH/SDL_sound.pc" # allow ffmpeg to output anything to console :|
   cd ..
   rmdir temp
 }
