@@ -613,6 +613,7 @@ build_dependencies() {
   build_speexdsp
   build_speex
   build_sdl_sound
+  build_pdcurses
 }
 
 build_apps() {
@@ -1170,11 +1171,20 @@ build_sdl_sound() {
     do_make_and_make_install
     reset_cflags
   cd ..
-  mkdir -p temp
-  cd temp # so paths will work out right
-  sed -i.bak "s/-mwindows//" "$PKG_CONFIG_PATH/SDL_sound.pc" # allow ffmpeg to output anything to console :|
-  cd ..
-  rmdir temp
+}
+
+build_pdcurses() {
+  download_and_unpack_file http://sourceforge.net/projects/pdcurses/files/pdcurses/3.4/PDCurses-3.4.tar.gz
+  apply_patch file://$patch_dir/PDCurses-3.4.diff
+  cd PDCurses-3.4/win32
+    touch configure
+    do_make "$make_prefix_options -f mingwin32.mak DLL=N V=1 "
+    cp ../curses.h $mingw_w64_x86_64_prefix/include
+    cp ../panel.h $mingw_w64_x86_64_prefix/include
+    cp ../term.h $mingw_w64_x86_64_prefix/include
+    cp libpdcurses.a $mingw_w64_x86_64_prefix/lib
+    cp libpanel.a $mingw_w64_x86_64_prefix/lib
+  cd ../..
 }
 
 # set some parameters initial values
@@ -1268,7 +1278,7 @@ if [[ $compiler_flavors == "multi" || $compiler_flavors == "win32" ]]; then
   export PATH="$mingw_bin_path:$original_path"
   bits_target=32
   cross_prefix="$mingw_bin_path/i686-w64-mingw32-"
-  make_prefix_options="CC=${cross_prefix}gcc AR=${cross_prefix}ar PREFIX=$mingw_w64_x86_64_prefix RANLIB=${cross_prefix}ranlib LD=${cross_prefix}ld STRIP=${cross_prefix}strip CXX=${cross_prefix}g++ AS=${cross_prefix}as CPP=${cross_prefix}cpp"
+  make_prefix_options="CC=${cross_prefix}gcc AR=${cross_prefix}ar PREFIX=$mingw_w64_x86_64_prefix RANLIB=${cross_prefix}ranlib LD=${cross_prefix}ld LINK=${cross_prefix}gcc STRIP=${cross_prefix}strip CXX=${cross_prefix}g++ AS=${cross_prefix}as CPP=${cross_prefix}cpp"
   mkdir -p win32
   cd win32
     build_dependencies 
@@ -1286,7 +1296,7 @@ if [[ $compiler_flavors == "multi" || $compiler_flavors == "win64" ]]; then
   export PATH="$mingw_bin_path:$original_path"
   bits_target=64
   cross_prefix="$mingw_bin_path/x86_64-w64-mingw32-"
-  make_prefix_options="CC=${cross_prefix}gcc AR=${cross_prefix}ar PREFIX=$mingw_w64_x86_64_prefix RANLIB=${cross_prefix}ranlib LD=${cross_prefix}ld STRIP=${cross_prefix}strip CXX=${cross_prefix}g++ AS=${cross_prefix}as CPP=${cross_prefix}cpp"
+  make_prefix_options="CC=${cross_prefix}gcc AR=${cross_prefix}ar PREFIX=$mingw_w64_x86_64_prefix RANLIB=${cross_prefix}ranlib LD=${cross_prefix}ld LINK=${cross_prefix}gcc STRIP=${cross_prefix}strip CXX=${cross_prefix}g++ AS=${cross_prefix}as CPP=${cross_prefix}cpp"
   mkdir -p win64
   cd win64
     build_dependencies

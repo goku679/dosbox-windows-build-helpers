@@ -1,0 +1,38 @@
+diff -Naur PDCurses-3.4.old/win32/mingwin32.mak PDCurses-3.4/win32/mingwin32.mak
+--- PDCurses-3.4.old/win32/mingwin32.mak	2018-06-07 23:09:12.835252222 -0700
++++ PDCurses-3.4/win32/mingwin32.mak	2018-06-08 07:52:45.515744604 -0700
+@@ -3,7 +3,7 @@
+ # Usage: make -f [path\]mingwin32.mak [DEBUG=Y] [DLL=Y] [WIDE=Y] [UTF8=Y] [tgt]
+ #
+ # where tgt can be any of:
+-# [all|demos|pdcurses.a|testcurs.exe...]
++# [all|demos|libpdcurses.a|testcurs.exe...]
+ 
+ O = o
+ 
+@@ -51,14 +51,14 @@
+ ifeq ($(DLL),Y)
+ 	CFLAGS += -DPDC_DLL_BUILD
+ 	LIBEXE = gcc $(DEFFILE)
+-	LIBFLAGS = -Wl,--out-implib,pdcurses.a -shared -o
++	LIBFLAGS = -Wl,--out-implib,libpdcurses.a -shared -o
+ 	LIBCURSES = pdcurses.dll
+ 	LIBDEPS = $(LIBOBJS) $(PDCOBJS) $(DEFFILE)
+ 	CLEAN = $(LIBCURSES) *.a $(DEFFILE)
+ else
+ 	LIBEXE = ar
+ 	LIBFLAGS = rcv
+-	LIBCURSES = pdcurses.a
++	LIBCURSES = libpdcurses.a
+ 	LIBDEPS = $(LIBOBJS) $(PDCOBJS)
+ 	CLEAN = *.a
+ endif
+@@ -87,7 +87,7 @@
+ 
+ $(LIBCURSES) : $(LIBDEPS)
+ 	$(LIBEXE) $(LIBFLAGS) $@ $?
+-	-copy pdcurses.a panel.a
++	-cp libpdcurses.a libpanel.a
+ 
+ $(LIBOBJS) $(PDCOBJS) : $(PDCURSES_HEADERS)
+ $(PDCOBJS) : $(PDCURSES_WIN_H)
