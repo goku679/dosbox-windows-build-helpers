@@ -1,0 +1,31 @@
+diff -Naur dosbox.old/configure.ac dosbox/configure.ac
+--- dosbox.old/configure.ac	2018-06-09 21:08:21.446401118 -0700
++++ dosbox/configure.ac	2018-06-09 21:59:46.117828713 -0700
+@@ -403,10 +403,10 @@
+   ]])], [AC_MSG_RESULT(yes); have_sdl_net_lib=yes], AC_MSG_RESULT(no))
+   LIBS=$LIBS_BACKUP
+ else
+-AC_CHECK_LIB(SDL_net, SDLNet_Init, have_sdl_net_lib=yes, , )
++AC_CHECK_LIB(SDL_net, SDLNet_Init, have_sdl_net_lib=yes, , -liphlpapi -lwsock32 -lws2_32)
+ fi
+ if test x$have_sdl_net_lib = xyes -a x$have_sdl_net_h = xyes ; then
+-   LIBS="$LIBS -lSDL_net"
++   LIBS="$LIBS -lSDL_net -liphlpapi -lwsock32 -lws2_32"
+    AC_DEFINE(C_MODEM,1)
+    AC_DEFINE(C_IPX,1)
+ else 
+@@ -478,11 +478,11 @@
+ 
+ AH_TEMPLATE(C_SDL_SOUND,[Define to 1 to enable SDL_sound support])
+ AC_CHECK_HEADER(SDL_sound.h,have_SDL_sound_h=yes,)
+-AC_CHECK_LIB(SDL_sound, Sound_Init, have_SDL_sound_init=yes,,)
+-AC_CHECK_LIB(SDL_sound, Sound_Seek, have_SDL_sound_seek=yes,,)
++AC_CHECK_LIB(SDL_sound, Sound_Init, have_SDL_sound_init=yes,, -lspeex -lmodplug -lmikmod -lsmpeg -lFLAC -lvorbisfile -lvorbis -logg -lstdc++)
++AC_CHECK_LIB(SDL_sound, Sound_Seek, have_SDL_sound_seek=yes,, -lspeex -lmodplug -lmikmod -lsmpeg -lFLAC -lvorbisfile -lvorbis -logg -lstdc++)
+ if test x$have_SDL_sound_h = xyes -a x$have_SDL_sound_init = xyes ; then
+   if test x$have_SDL_sound_seek = xyes ; then
+-    LIBS="-lSDL_sound $LIBS"
++    LIBS="-lSDL_sound -lspeex -lmodplug -lmikmod -lsmpeg -lFLAC -lvorbisfile -lvorbis -logg -lstdc++ $LIBS"
+     AC_DEFINE(C_SDL_SOUND,1)
+    else 
+      AC_MSG_WARN([Can't find SoundSeek in libSDL_Sound, libSDL_sound support disabled])

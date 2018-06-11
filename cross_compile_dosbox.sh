@@ -564,7 +564,7 @@ find_all_build_exes() {
 build_dependencies() {
   echo "Building dosbox dependency libraries..."
   build_dlfcn
-  build_mman
+  #build_mman
   build_bzip2 # Bzlib (bzip2) in FFmpeg is autodetected.
   build_liblzma # Lzma in FFmpeg is autodetected. Uses dlfcn.
   build_zlib # Zlib in FFmpeg is autodetected.
@@ -616,8 +616,30 @@ build_dependencies() {
   build_pdcurses
 }
 
+build_dosbox() {
+  rm dosbox.diff*
+  do_git_checkout https://github.com/roydmerkel/dosbox.git dosbox features
+  apply_patch file://$patch_dir/dosbox.diff
+  cd dosbox
+    export SDL_CONFIG="${cross_prefix}sdl-config"
+    export CC=${cross_prefix}gcc
+    export CXX=${cross_prefix}g++
+    export AR=${cross_prefix}ar
+    export RANLIB=${cross_prefix}ranlib
+    do_autogen
+    generic_configure "--host=i686-pc-cygwin"
+    do_make_and_make_install
+    unset SDL_CONFIG
+    unset CC
+    unset CXX
+    unset AR
+    unset RANLIB
+  cd ..
+}
+
 build_apps() {
   echo "Building dosbox..."
+  build_dosbox
 }
 
 build_dlfcn() {
@@ -1039,6 +1061,7 @@ build_libwebp() {
       do_make_and_make_install
       unset LIBPNG_CONFIG
     cd ..
+    touch webp
   fi
 }
 
