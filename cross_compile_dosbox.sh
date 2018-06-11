@@ -485,6 +485,11 @@ generic_configure() {
   do_configure "--host=$host_target --prefix=$mingw_w64_x86_64_prefix --disable-shared --enable-static $extra_configure_options"
 }
 
+generic_dll_configure() {
+  local extra_configure_options="$1"
+  do_configure "--host=$host_target --prefix=$mingw_w64_x86_64_prefix --enable-shared --disable-static $extra_configure_options"
+}
+
 # params: url, optional "english name it will unpack to"
 generic_download_and_configure() {
   local url="$1"
@@ -501,6 +506,20 @@ generic_download_and_configure() {
 
 # params: url, optional "english name it will unpack to"
 generic_download_and_make_and_install() {
+  local url="$1"
+  local english_name="$2"
+  if [[ -z $english_name ]]; then
+    english_name=$(basename $url | sed s/\.tar\.*//) # remove .tar.xx, take last part of url
+  fi
+  local extra_configure_options="$3"
+  download_and_unpack_file $url $english_name
+  cd $english_name || exit "unable to cd, may need to specify dir it will unpack to as parameter"
+  generic_configure "$extra_configure_options"
+  do_make_and_make_install
+  cd ..
+}
+
+generic_dll_download_and_make_and_install() {
   local url="$1"
   local english_name="$2"
   if [[ -z $english_name ]]; then
@@ -613,27 +632,33 @@ build_dependencies() {
   build_speexdsp
   build_speex
   build_sdl_sound
-  build_pdcurses
+  #build_pdcurses
 }
 
 build_dosbox() {
-  rm dosbox.diff*
+  #rm dosbox.diff*
   do_git_checkout https://github.com/roydmerkel/dosbox.git dosbox features
-  apply_patch file://$patch_dir/dosbox.diff
+  #do_git_checkout https://github.com/roydmerkel/dosbox.git dosbox
+  #apply_patch file://$patch_dir/dosbox.diff
   cd dosbox
     export SDL_CONFIG="${cross_prefix}sdl-config"
-    export CC=${cross_prefix}gcc
-    export CXX=${cross_prefix}g++
-    export AR=${cross_prefix}ar
-    export RANLIB=${cross_prefix}ranlib
+    #export CC=${cross_prefix}gcc
+    #export CXX=${cross_prefix}g++
+    #export AR=${cross_prefix}ar
+    #export RANLIB=${cross_prefix}ranlib
+    export LIBS="-lSDL_net -liphlpapi -lwsock32 -lws2_32 -lSDL_sound -lspeex -lmodplug -lmikmod -lsmpeg -lFLAC -lvorbisfile -lvorbis -logg -lstdc++"
+    #export LIBS="-lspeex -lmodplug -lmikmod -lsmpeg -lFLAC -lvorbisfile -lvorbis -logg -lstdc++"
+    export LDFLAGS="-static-libgcc -static-libstdc++ -s"
     do_autogen
-    generic_configure "--host=i686-pc-cygwin"
+    generic_configure "--enable-core-inline"
     do_make_and_make_install
+    unset LDFLAGS
+    unset LIBS
     unset SDL_CONFIG
-    unset CC
-    unset CXX
-    unset AR
-    unset RANLIB
+    #unset CC
+    #unset CXX
+    #unset AR
+    #unset RANLIB
   cd ..
 }
 
@@ -1069,6 +1094,7 @@ build_sdl() {
   # apparently ffmpeg expects prefix-sdl-config not sdl-config that they give us, so rename...
   export CFLAGS=-DDECLSPEC=  # avoid SDL trac tickets 939 and 282, and not worried about optimizing yet...
 #  generic_download_and_configure https://www.libsdl.org/release/SDL-1.2.15.tar.gz
+  #generic_download_and_make_and_install https://www.libsdl.org/release/SDL-1.2.15.tar.gz
   generic_download_and_make_and_install https://www.libsdl.org/release/SDL-1.2.15.tar.gz
   reset_cflags
   mkdir -p temp
@@ -1087,6 +1113,7 @@ build_sdl_net() {
   # apparently ffmpeg expects prefix-sdl-config not sdl-config that they give us, so rename...
   export CFLAGS=-DDECLSPEC=  # avoid SDL trac tickets 939 and 282, and not worried about optimizing yet...
 #  generic_download_and_configure https://www.libsdl.org/release/SDL-1.2.15.tar.gz
+  #generic_download_and_make_and_install https://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.8.tar.gz
   generic_download_and_make_and_install https://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.8.tar.gz
   reset_cflags
   mkdir -p temp
@@ -1103,6 +1130,7 @@ build_sdl_image() {
   download_and_unpack_file https://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.12.tar.gz
   apply_patch file://$patch_dir/SDL_image-1.2.12.diff
   cd SDL_image-1.2.12
+    #generic_configure
     generic_configure
     do_make_and_make_install
   cd ..
@@ -1190,6 +1218,7 @@ build_sdl_sound() {
   apply_patch file://$patch_dir/SDL_sound-1.0.3.diff
   cd SDL_sound-1.0.3
     export CFLAGS="${CFLAGS} -I$mingw_w64_x86_64_prefix/include -I$mingw_w64_x86_64_prefix/include/smpeg"
+    #generic_configure
     generic_configure
     do_make_and_make_install
     reset_cflags
